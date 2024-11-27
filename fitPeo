@@ -1,0 +1,98 @@
+package interview;
+
+import java.time.Duration;
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+public class test3 {
+
+	public static void main(String[] args) throws InterruptedException {
+		WebDriver driver=new ChromeDriver();
+		driver.manage().window().maximize();
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
+		WebDriverWait wait=new WebDriverWait(driver,Duration.ofSeconds(4));
+
+		Actions a=new Actions(driver);
+		//Navigate to the FitPeo Homepage.
+
+		driver.get("https://www.fitpeo.com/");
+
+		//Navigate to the Revenue Calculator Page:
+
+		driver.findElement(By.xpath("//div[text()='Revenue Calculator']")).click();
+
+		//Scroll Down to the Slider section:
+
+		Thread.sleep(2000);
+
+		WebElement num = driver.findElement(By.xpath("//input[@type='number']"));
+
+		a.scrollToElement(num).perform();
+		Thread.sleep(2000);
+
+		//Adjust the Slider to 820
+
+		WebElement rangeSlider = driver.findElement(By.xpath("//input[@type='range']"));
+
+		int minValue = Integer.parseInt(rangeSlider.getAttribute("min"));
+		int maxValue = Integer.parseInt(rangeSlider.getAttribute("max"));
+		a.clickAndHold(rangeSlider)
+		.moveByOffset(94, 0)
+		.release(rangeSlider)
+		.build().perform();
+		Thread.sleep(2000);
+		Thread.sleep(2000);
+
+		WebElement num1 = driver.findElement(By.xpath("//input[contains(@class,'MuiInputBase')]"));
+		a.scrollToElement(num1).perform();
+		Thread.sleep(2000);
+		num1.clear();
+		Thread.sleep(2000);
+
+		// Update the Text Field:
+		//Enter the value 560 in the text field. Now the slider also should change accordingly 
+
+		JavascriptExecutor js=(JavascriptExecutor) driver;
+		js.executeScript("document.getElementById(':r0:').value='560'");
+		Thread.sleep(2000);
+
+		//	Select CPT Codes:
+		//	Scroll down further and select the checkboxes for CPT-99091, CPT-99453, CPT-99454, and CPT-99474.
+
+		List<WebElement> checkbox = driver.findElements(By.xpath("//p[contains(text(),'CPT-')]"));
+		for (WebElement cb : checkbox) {
+			String text = cb.getText();
+			if(text.equals("CPT-99091")) {
+				driver.findElement(By.xpath("//p[contains(text(),'CPT-99091')]/..//input[@type='checkbox']")).click();
+			}
+			else if(text.equals("CPT-99453")) {
+				driver.findElement(By.xpath("//p[contains(text(),'CPT-99453')]/..//input[@type='checkbox']")).click();
+			}
+			else if(text.equals("CPT-99454")) {
+				driver.findElement(By.xpath("//p[contains(text(),'CPT-99454')]/..//input[@type='checkbox']")).click();
+			}
+			else if(text.equals("CPT-99474")) {
+				driver.findElement(By.xpath("//p[contains(text(),'CPT-99474')]/..//input[@type='checkbox']")).click();
+			}
+		}
+		//Verify that the header displaying Total Recurring Reimbursement for all Patients Per Month: shows the value $110700.	
+
+		String text = driver.findElement(By.xpath("//p[text()='Total Recurring Reimbursement for all Patients Per Month:']/p")).getText();
+		if(text.equals("$110700")) {
+			System.out.println("verified");
+		}
+		else {
+			System.out.println("not verified");
+		}
+		driver.quit();
+
+	}
+
+}
